@@ -20,7 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${beVietnamPro.className} antialiased max-w-[1440px]`}>
+      <body className={`${beVietnamPro.className} antialiased min-h-screen`}>
         {children}
       </body>
     </html>
