@@ -1,17 +1,12 @@
 import type { Metadata } from 'next'
-import { Be_Vietnam_Pro } from 'next/font/google'
 import './globals.css'
 import { ReactNode } from 'react'
+import { beVietnamPro } from '@/fonts/beVietamPro'
 
 export const metadata: Metadata = {
   title: 'tamojunto',
   description: 'A revolução do Marketing por Influência',
 }
-
-export const beVietnamPro = Be_Vietnam_Pro({
-  subsets: ['latin'],
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-})
 
 export default function RootLayout({
   children,
@@ -19,7 +14,7 @@ export default function RootLayout({
   children: ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="pt-BR">
       <body className={`${beVietnamPro.className} antialiased min-h-screen`}>
         {children}
       </body>
