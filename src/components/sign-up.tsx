@@ -13,14 +13,74 @@ import { Button } from './ui/button'
 import { useForm } from 'react-hook-form'
 import Image from 'next/image'
 import { Checkbox } from './ui/checkbox'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { createUser } from '@/services/auth.service'
+import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
+import { signIn } from 'next-auth/react'
+
+const formSchema = z
+  .object({
+    email: z.string().email('Email inválido'),
+    password: z.string().min(8, 'A senha deve ter no mínimo 8 caracteres'),
+    confirmPassword: z.string(),
+    terms: z.boolean().refine((val) => val, {
+      message: 'Obrigatório',
+    }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'As senhas não coincidem',
+    path: ['confirmPassword'],
+  })
+
+type FormData = z.infer<typeof formSchema>
 
 export function SignUp() {
-  const formContext = useForm()
+  const router = useRouter()
 
-  const { handleSubmit, control } = formContext
+  const formContext = useForm<FormData>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+      confirmPassword: '',
+      terms: false,
+    },
+  })
 
-  function onSubmit(data: unknown) {
-    console.log(data)
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = formContext
+
+  console.log('meus erros', errors)
+
+  async function onSubmit(values: FormData) {
+    try {
+      await createUser({
+        email: values.email,
+        password: values.password,
+      })
+
+      toast.success('Conta criada com sucesso!')
+      router.push('/sign-in')
+    } catch (error) {
+      toast.error('Erro ao criar conta', {
+        description: error instanceof Error ? error.message : 'Ocorreu um erro',
+      })
+    }
+  }
+
+  async function handleGoogleSignIn() {
+    try {
+      await signIn('google', { callbackUrl: '/dashboard' })
+    } catch (error) {
+      toast.error('Erro ao entrar com Google', {
+        description: error instanceof Error ? error.message : 'Ocorreu um erro',
+      })
+    }
   }
 
   return (
@@ -39,7 +99,7 @@ export function SignUp() {
         >
           <FormField
             control={control}
-            name="username"
+            name="email"
             render={({ field }) => (
               <FormItem className="mb-4 gap-3">
                 <FormLabel className="not-lg:text-xs">Email</FormLabel>
@@ -56,7 +116,7 @@ export function SignUp() {
           />
           <FormField
             control={control}
-            name="username"
+            name="password"
             render={({ field }) => (
               <FormItem className="mb-4 gap-3">
                 <FormLabel className="not-lg:text-xs">Senha</FormLabel>
@@ -65,6 +125,7 @@ export function SignUp() {
                     placeholder="min. 8 caracteres"
                     {...field}
                     className="h-[61px] rounded-[8px] placeholder:text-gray-2 placeholder:not-lg:text-sm"
+                    type="password"
                   />
                 </FormControl>
                 <FormMessage />
@@ -73,7 +134,7 @@ export function SignUp() {
           />
           <FormField
             control={control}
-            name="username"
+            name="confirmPassword"
             render={({ field }) => (
               <FormItem className="mb-4 gap-3">
                 <FormLabel className="not-lg:text-xs">
@@ -84,6 +145,7 @@ export function SignUp() {
                     placeholder="Digite a mesma senha escolhida"
                     {...field}
                     className="h-[61px] rounded-[8px] placeholder:text-gray-2 placeholder:not-lg:text-sm"
+                    type="password"
                   />
                 </FormControl>
                 <FormMessage />
@@ -91,32 +153,40 @@ export function SignUp() {
             )}
           />
           <div className="mb-8 mt-[30px] flex justify-between">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="terms"
-                className="data-[state=checked]:bg-default cursor-pointer size-5"
-              />
-              <label
-                htmlFor="terms"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 not-lg:text-xs"
-              >
-                Concordo com os{' '}
-                <span className="text-default cursor-pointer hover:text-default/90">
-                  Termos e Condições
-                </span>
-              </label>
-            </div>
+            <FormField
+              control={control}
+              name="terms"
+              render={({ field }) => (
+                <FormItem className="flex items-center space-x-2">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                      className="data-[state=checked]:bg-default cursor-pointer size-5"
+                    />
+                  </FormControl>
+                  <FormLabel className="!mt-0 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 not-lg:text-xs data-[error=true]:text-black">
+                    Concordo com os{' '}
+                    <span className="text-default cursor-pointer hover:text-default/90">
+                      Termos e Condições
+                    </span>
+                  </FormLabel>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
 
           <Button
             type="submit"
             className="w-full bg-default hover:bg-default/90 cursor-pointer mb-4 h-[51px] not-lg:text-sm"
           >
-            Entrar
+            Cadastrar
           </Button>
           <Button
             variant="outline"
             className="w-full cursor-pointer gap-3 h-[51px] not-lg:text-xs"
+            onClick={handleGoogleSignIn}
           >
             <Image
               src="./google-icon.svg"

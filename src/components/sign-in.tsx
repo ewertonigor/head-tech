@@ -13,14 +13,54 @@ import { Button } from './ui/button'
 import { useForm } from 'react-hook-form'
 import Image from 'next/image'
 import { Checkbox } from './ui/checkbox'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useRouter } from 'next/navigation'
+import { signIn } from 'next-auth/react'
+import { toast } from 'sonner'
+
+const formSchema = z.object({
+  email: z.string().email('Email inválido'),
+  password: z.string().min(8, 'A senha deve ter no mínimo 8 caracteres'),
+})
+
+type FormData = z.infer<typeof formSchema>
 
 export function SignIn() {
-  const formContext = useForm()
+  const router = useRouter()
+
+  const formContext = useForm<FormData>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  })
 
   const { handleSubmit, control } = formContext
 
-  function onSubmit(data: unknown) {
-    console.log(data)
+  async function onSubmit(values: FormData) {
+    try {
+      const result = await signIn('credentials', {
+        email: values.email,
+        password: values.password,
+        redirect: false,
+      })
+
+      if (result?.error) {
+        throw new Error(result.error)
+      }
+
+      router.push('/dashboard')
+    } catch (error) {
+      toast.error('Erro ao fazer login', {
+        description: error instanceof Error ? error.message : 'Ocorreu um erro',
+      })
+    }
+  }
+
+  async function handleGoogleSignIn() {
+    await signIn('google', { callbackUrl: '/dashboard' })
   }
 
   return (
@@ -39,7 +79,7 @@ export function SignIn() {
         >
           <FormField
             control={control}
-            name="username"
+            name="email"
             render={({ field }) => (
               <FormItem className="mb-4 gap-3">
                 <FormLabel className="not-lg:text-xs">Email</FormLabel>
@@ -56,7 +96,7 @@ export function SignIn() {
           />
           <FormField
             control={control}
-            name="username"
+            name="password"
             render={({ field }) => (
               <FormItem className="mb-4 gap-3">
                 <FormLabel className="not-lg:text-xs">Senha</FormLabel>
@@ -65,6 +105,7 @@ export function SignIn() {
                     placeholder="min. 8 caracteres"
                     {...field}
                     className="h-[61px] rounded-[8px] placeholder:text-gray-2 placeholder:not-lg:text-sm"
+                    type="password"
                   />
                 </FormControl>
                 <FormMessage />
@@ -99,6 +140,7 @@ export function SignIn() {
           <Button
             variant="outline"
             className="w-full cursor-pointer gap-3 h-[51px] not-lg:text-xs"
+            onClick={handleGoogleSignIn}
           >
             <Image
               src="./google-icon.svg"
