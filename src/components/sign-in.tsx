@@ -18,6 +18,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import { toast } from 'sonner'
+import { AIText } from './AiText'
 
 const formSchema = z.object({
   email: z.string().email('Email inválido'),
@@ -68,9 +69,7 @@ export function SignIn() {
       <h1 className="mt-[30px] lg:mt-[50px] text-2xl lg:text-[32px] font-bold text-black-1 mb-[8px] lg:mb-[18px] leading-none">
         Entrar
       </h1>
-      <span className="text-gray-1 not-lg:text-xs">
-        Non sit purus tempus malesuada poten
-      </span>
+      <AIText prompt="Gere uma mensagem curta e convidativa para a página de login de uma plataforma de marketing de influência chamada 'Tamojunto'. Use no máximo 8 palavras." />
 
       <Form {...formContext}>
         <form
@@ -137,27 +136,27 @@ export function SignIn() {
           >
             Entrar
           </Button>
-          <Button
-            variant="outline"
-            className="w-full cursor-pointer gap-3 h-[51px] not-lg:text-xs"
-            onClick={handleGoogleSignIn}
-          >
-            <Image
-              src="./google-icon.svg"
-              alt="Ícone do Google"
-              width={24}
-              height={24}
-            />{' '}
-            Entrar com o Google
-          </Button>
-
-          <span className="flex justify-center text-sm font-medium mt-6 not-lg:text-xs">
-            Ainda não tem conta?
-            <span className="text-default ml-0.5 cursor-pointer hover:text-default/90">
-              Assine agora
-            </span>
-          </span>
         </form>
+        <Button
+          variant="outline"
+          className="w-full cursor-pointer gap-3 h-[51px] not-lg:text-xs"
+          onClick={handleGoogleSignIn}
+        >
+          <Image
+            src="./google-icon.svg"
+            alt="Ícone do Google"
+            width={24}
+            height={24}
+          />{' '}
+          Entrar com o Google
+        </Button>
+
+        <span className="flex justify-center text-sm font-medium mt-6 not-lg:text-xs">
+          Ainda não tem conta?
+          <span className="text-default ml-0.5 cursor-pointer hover:text-default/90">
+            Assine agora
+          </span>
+        </span>
       </Form>
     </div>
   )
