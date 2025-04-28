@@ -1,4 +1,3 @@
-// services/auth.service.ts
 export async function createUser({
   email,
   password,
