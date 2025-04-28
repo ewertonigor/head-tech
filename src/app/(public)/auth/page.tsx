@@ -1,9 +1,14 @@
+'use client'
+
 import { SignIn } from '@/components/sign-in'
 import { SignUp } from '@/components/sign-up'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import Image from 'next/image'
+import { useIsMobile } from '@/hooks/use-mobile'
 
 export default function AuthPage() {
+  const isMobile = useIsMobile()
+
   return (
     <div className="flex min-h-screen w-full flex-col lg:flex-row">
       <div className="relative max-w-[720px] z-10 lg:pl-[91px] pt-[68px] lg:flex-1 flex flex-col items-center lg:items-start not-lg:mx-auto not-lg:mt-[27px] not-lg:mb-auto not-lg:bg-white rounded-[20px] not-lg:pt-[30px] not-lg:w-[90%] not-lg:max-w-[550px]">
@@ -56,14 +61,16 @@ export default function AuthPage() {
           className="object-cover"
           priority
         />
-        <div className="absolute inset-0 flex items-center justify-center pl-[176px] p-4">
-          <h2 className="font-bold text-[50px] leading-[60px] tracking-[0.5%]">
-            A Revolução do Marketing por
-            <span className=" font-bold text-[50px] leading-[60px] tracking-[0.5%] ml-3 text-[#4FD8CD]">
-              Influência
-            </span>
-          </h2>
-        </div>
+        {isMobile && (
+          <div className="absolute inset-0 flex items-center justify-center pl-[176px] p-4">
+            <h2 className="font-bold text-[50px] leading-[60px] tracking-[0.5%]">
+              A Revolução do Marketing por
+              <span className=" font-bold text-[50px] leading-[60px] tracking-[0.5%] ml-3 text-[#4FD8CD]">
+                Influência
+              </span>
+            </h2>
+          </div>
+        )}
       </div>
     </div>
   )
