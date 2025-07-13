@@ -18,7 +18,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import { toast } from 'sonner'
-import { AIText } from './AiText'
+import { AIText } from './ai-text'
 
 const formSchema = z.object({
   email: z.string().email('Email inválido'),

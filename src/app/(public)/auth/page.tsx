@@ -43,7 +43,7 @@ export default function AuthPage() {
           </TabsContent>
           <TabsContent
             value="sign-up"
-            className="not-lg:px-6 lg:px-0 pb-[39px]"
+            className="not-lg:px-6 lg:px-0 sm:pb-[39px] lg:pb-0"
           >
             <SignUp />
           </TabsContent>

@@ -5,7 +5,6 @@ export default [
   {
     rules: {
       '@typescript-eslint/no-unsafe-declaration-merging': 'off',
-      // outras regras...
     }
   }
 ];

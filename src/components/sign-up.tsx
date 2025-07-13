@@ -19,7 +19,7 @@ import { createUser } from '@/services/auth.service'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
-import { AIText } from './AiText'
+import { AIText } from './ai-text'
 
 const formSchema = z
   .object({
@@ -50,13 +50,7 @@ export function SignUp() {
     },
   })
 
-  const {
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = formContext
-
-  console.log('meus erros', errors)
+  const { handleSubmit, control } = formContext
 
   async function onSubmit(values: FormData) {
     try {
