@@ -20,14 +20,15 @@ export async function createUser({
       }),
     })
 
+    const responseBody = await response.json()
+
     if (!response.ok) {
-      const errorData = await response.json()
-      throw new Error(errorData.error || 'Erro ao cadastrar usuário')
+      throw new Error(responseBody.error || 'Erro ao cadastrar usuário')
     }
 
-    return await response.json()
+    return responseBody
   } catch (error) {
-    console.error('Erro ao criar usuário:', error)
+    console.log('Erro no serviço createUser:', error)
     throw error
   }
 }

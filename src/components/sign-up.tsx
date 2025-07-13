@@ -60,11 +60,21 @@ export function SignUp() {
       })
 
       toast.success('Conta criada com sucesso!')
-      router.push('/auth')
-    } catch (error) {
-      toast.error('Erro ao criar conta', {
-        description: error instanceof Error ? error.message : 'Ocorreu um erro',
+
+      const result = await signIn('credentials', {
+        email: values.email,
+        password: values.password,
+        redirect: false,
       })
+
+      if (result?.error) {
+        throw new Error(result.error)
+      }
+
+      router.push('/dashboard')
+    } catch (error) {
+      console.log('erro', error)
+      toast.error('Ocorreu um problema')
     }
   }
 
@@ -79,7 +89,7 @@ export function SignUp() {
   }
 
   return (
-    <div>
+    <div className="pb-[39px] lg:pb-0">
       <h1 className="mt-[30px] lg:mt-[50px] text-2xl lg:text-[32px] font-bold text-black-1 mb-[8px] lg:mb-[18px] leading-none">
         Cadastrar
       </h1>
